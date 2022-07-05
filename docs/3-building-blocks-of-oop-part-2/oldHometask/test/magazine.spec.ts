@@ -1,6 +1,7 @@
-import {Pages} from "../src/pages";
-import {Page} from "../src/page";
-import {Magazine} from "../src/magazine";
+import {Pages} from "../src/Pages";
+import {Page} from "../src/Page";
+import {Magazine} from "../src/Magazine";
+import { PageFactory } from "../src/PageFactory";
 
 describe('Magazine', () => {
   it('toString should return correct value', () => {
@@ -9,6 +10,16 @@ describe('Magazine', () => {
       new Page(1, 'with article', 'glossy paper'),
       new Page(2, 'with article', 'glossy paper')
     ]));
+
+    for (const page of magazine) {
+      expect(page).toEqual(`Magazine: G.Q with number of pages: 2, here is page with article #${counter} and it\'s material is glossy paper`);
+      counter++;
+    }
+  });
+
+  it('toString should return correct value via using PageFactory', () => {
+    let counter = 1;
+    const magazine = new Magazine('G.Q', new Pages(PageFactory(2, 'magazine')));
 
     for (const page of magazine) {
       expect(page).toEqual(`Magazine: G.Q with number of pages: 2, here is page with article #${counter} and it\'s material is glossy paper`);
