@@ -1,35 +1,32 @@
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 
-import styles from './Sort.module.scss'
+import styles from "./Sort.module.scss";
+import {sortData, updateData, useStore} from "../../store";
+import {useEffect} from "react";
 
-interface SortProps {
-  store?: {};
-  updateStore?: (val) => void;
-}
+export function Sort() {
+  const [globalData, dispatch] = useStore();
+  const {data, sortType} = globalData;
 
-// OR
-
-//interface SortProps {
-//  selected?: {};
-//  updateSelected?: (val) => void;
-//}
-
-// OR store can be global
-
-export function Sort(props: SortProps) {
-  const handleChange = (value) => {
+  const handleChange = (value: string) => {
     console.log(value); // for debugging
+    sortData(dispatch, value);
   };
+
+  useEffect(() => {
+    if (sortType) {
+      updateData(dispatch, data, sortType);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortType]);
 
   return (
     <FormControl className={styles.control} component="fieldset">
-      <FormLabel className={styles.label}>
-        Sort by payments
-      </FormLabel>
+      <FormLabel className={styles.label}>Sort by payments</FormLabel>
       <RadioGroup
         className={styles.group}
         aria-label="sorting"

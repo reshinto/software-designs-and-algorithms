@@ -1,31 +1,33 @@
-import { useState } from 'react';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/Search';
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 
-import styles from './Search.module.scss';
+import styles from "./Search.module.scss";
+import {searchData, updateData, useStore} from "../../store";
+import {useEffect} from "react";
+import {getData, handleSearch} from "../../utils";
+import {Row} from "../Table";
 
-interface SearchProps {
-  store?: {};
-  updateStore?: (val) => void;
-}
+export function Search() {
+  const [globalData, dispatch] = useStore();
+  const {data, search: searchedValue, sortType} = globalData;
 
-// OR
-
-//interface SearchProps {
-//  selected?: {};
-//  updateSelected?: (val) => void;
-//}
-
-// OR store can be global
-
-export function Search(props: SearchProps) {
-  const [searchedValue, setSearchedValue] = useState<string>('');
-
-  const onChange = (value) => {
+  const onChange = (value: string) => {
     console.log(value); // for debugging
-    setSearchedValue(value);
-  }
+    searchData(dispatch, value);
+  };
+
+  useEffect(() => {
+    if (searchedValue) {
+      const newData = data.filter((element: Row) =>
+        handleSearch(searchedValue, element)
+      );
+      updateData(dispatch, newData, sortType);
+    } else {
+      getData(sortType, dispatch);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchedValue]);
 
   return (
     <OutlinedInput

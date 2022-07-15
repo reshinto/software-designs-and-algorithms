@@ -1,48 +1,46 @@
-import { useState } from 'react';
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from "@mui/material/Checkbox";
 
-import styles from './Filters.module.scss';
-
-interface FiltersProps {
-  store?: {};
-  updateStore?: (val) => void;
-}
-
-// OR
-
-//interface FiltersProps {
-//  selected?: {};
-//  updateSelected?: (val) => void;
-//}
-
-// OR store can be global
+import styles from "./Filters.module.scss";
+import {updateData, updateFilter, useStore} from "../../store";
+import {useEffect} from "react";
+import {handleFilter} from "../../utils";
+import {Row} from "../Table";
 
 const OPTIONS = [
   {
-    title: 'Without posts',
+    title: "Without posts",
   },
   {
-    title: 'More than 100 posts',
+    title: "More than 100 posts",
   },
 ];
 
-export function Filters(props: FiltersProps) {
-  const [selectedFilter, setSelectedFilter] = useState<string[]>([]);
+export function Filters() {
+  const [globalData, dispatch] = useStore();
+  const {data, filters: selectedFilter, sortType} = globalData;
 
-  const onChange = ({ title }) => {
+  const onChange = ({title}: {title: string}) => {
     console.log(title); // for debugging
 
     let updatedFilters;
-    if (selectedFilter.find((filter) => filter === title)) {
-      updatedFilters = selectedFilter.filter(
-        (filter) => filter !== title
-      );
+    if (selectedFilter.find((filter: string) => filter === title)) {
+      updatedFilters = selectedFilter.filter((filter) => filter !== title);
     } else {
       updatedFilters = [...selectedFilter, title];
     }
 
-    setSelectedFilter(updatedFilters);
+    updateFilter(dispatch, updatedFilters);
   };
+
+  useEffect(() => {
+    if (data.length && selectedFilter.length) {
+      const newData = data.filter((element: Row) =>
+        handleFilter(selectedFilter, element)
+      );
+      updateData(dispatch, newData, sortType);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.length, selectedFilter.length]);
 
   return (
     <div className={styles.group}>
@@ -55,12 +53,14 @@ export function Filters(props: FiltersProps) {
             key={option.title}
           >
             <Checkbox
-              checked={!!selectedFilter.find(filter => filter === option.title)}
+              checked={
+                !!selectedFilter.find((filter) => filter === option.title)
+              }
               value={option.title}
               onChange={() => onChange(option)}
               size="small"
               color="primary"
-            />{' '}
+            />{" "}
             {option.title}
           </li>
         ))}
