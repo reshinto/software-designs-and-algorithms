@@ -1,6 +1,7 @@
+import Shipper from "./shipper";
+
 class Shipment {
   private static instance: Shipment;
-  private rate = 39;
   private shipmentID = 0;
   private weight = 0;
   private fromAddress = "";
@@ -14,7 +15,6 @@ class Shipment {
     if (!Shipment.instance) {
       Shipment.instance = new Shipment();
     }
-
     return Shipment.instance;
   }
 
@@ -23,6 +23,7 @@ class Shipment {
   }
 
   public ship() {
+    Shipper.configureShipper(this.getFromZipCode());
     return `Shipment ${this.shipmentID} ` +
     `from ${this.getFromAddress()} ${this.getFromZipCode()} ` +
     `to ${this.getToAddress()} ${this.getToZipCode()}, ` +
@@ -30,7 +31,7 @@ class Shipment {
   }
 
   private getCost() {
-    return this.weight * this.rate;
+    return Shipper.getInstance().getCost(this.weight);
   }
 
   public setWeight(weight: number) {
