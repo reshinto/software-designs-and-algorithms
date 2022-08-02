@@ -1,3 +1,6 @@
+import LetterShipment from "./LetterShipment";
+import OversizedShipment from "./oversizedShipment";
+import PackageShipment from "./PackageShipment";
 import Shipment from "./shipment";
 
 type ClientArgs = {
@@ -34,6 +37,27 @@ function configureWeight(weight?: number): void {
   }
 }
 
+function configureShipment(weight?: number): Shipment {
+  if (weight) {
+    switch (true) {
+      case weight <= 15: {
+        return LetterShipment.getInstance();
+      }
+      case weight > 15 || weight <= 160: {
+        return PackageShipment.getInstance();
+      }
+      case weight > 160: {
+        return OversizedShipment.getInstance();
+      }
+      default: {
+        return Shipment.getInstance();
+      }
+    }
+  }
+  return Shipment.getInstance();
+}
+
+
 function client({
   fromAdd,
   fromZip,
@@ -41,7 +65,7 @@ function client({
   toZip,
   weight
 }: ClientArgs) {
-  const shipment = Shipment.getInstance();
+  const shipment = configureShipment(weight);
   configureFromAddressAndZip(fromAdd, fromZip);
   configureToAddressAndZip(toAdd, toZip);
   configureWeight(weight);
@@ -54,7 +78,7 @@ const args1 = {
   fromZip: "12345",
   toAdd: "456 Main St",
   toZip: "54321",
-  weight: 10
+  weight: 500
 }
 const args2 = {
   weight: 10

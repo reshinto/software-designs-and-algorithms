@@ -3,13 +3,13 @@ import Shipper from "./shipper";
 class Shipment {
   private static instance: Shipment;
   private shipmentID = 0;
-  private weight = 0;
+  protected weight = 0;
   private fromAddress = "";
   private fromZipCode = "";
   private toAddress = "";
   private toZipCode = "";
 
-  private constructor() {}
+  protected constructor() {}
 
   public static getInstance() {
     if (!Shipment.instance) {

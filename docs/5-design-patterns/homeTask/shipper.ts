@@ -5,6 +5,7 @@ import ShipperInterface from "./shipperInterface";
 
 class Shipper {
   private static instance: Shipper;
+  private static packageType: string;
   private shipperStrategy: ShipperInterface = new AirEastShipper();
 
   private constructor() {}
@@ -23,37 +24,43 @@ class Shipper {
         case 1:
         case 2:
         case 3: {
-          instance.setShipper(new AirEastShipper());
+          instance.setShipper(new AirEastShipper(Shipper.packageType));
           break;
         }
         case 4:
         case 5:
         case 6: {
-          instance.setShipper(new ChicagoSprintShipper());
+          instance.setShipper(new ChicagoSprintShipper(Shipper.packageType));
           break;
         }
         case 7:
         case 8:
         case 9: {
-          instance.setShipper(new PacificParcelShipper());
+          instance.setShipper(new PacificParcelShipper(Shipper.packageType));
           break;
         }
         default: {
-          instance.setShipper(new AirEastShipper());
+          instance.setShipper(new AirEastShipper(Shipper.packageType));
           break;
         }
       }
     } else {
-      instance.setShipper(new AirEastShipper());
+      instance.setShipper(new AirEastShipper(Shipper.packageType));
     }
+  }
+
+  public static setPackageType(packageType: string): void {
+    Shipper.packageType = packageType;
   }
 
   private setShipper(shipper: ShipperInterface): void {
     this.shipperStrategy = shipper;
   }
 
-  public getCost(weight: number): number {
-    return this.shipperStrategy.rate * weight;
+  public getCost(totalWeight: number): number {
+    const additionWeight = totalWeight > 160 ? totalWeight - 160 : 0;
+    const weight = totalWeight - additionWeight;
+    return this.shipperStrategy.rate * weight + this.shipperStrategy.additionCharge + additionWeight * this.shipperStrategy.additionalRate;
   }
 }
 
