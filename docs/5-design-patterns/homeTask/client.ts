@@ -2,6 +2,7 @@ import LetterShipment from "./LetterShipment";
 import OversizedShipment from "./oversizedShipment";
 import PackageShipment from "./PackageShipment";
 import Shipment from "./shipment";
+import ShipmentDecorator from "./shipmentDecorator";
 
 type ClientArgs = {
   fromAdd?: string;
@@ -32,8 +33,9 @@ function configureToAddressAndZip(toAdd?: string, toZip?: string): void {
 }
 
 function configureWeight(weight?: number): void {
+  const shipment = Shipment.getInstance();
   if (weight !== undefined) {
-    Shipment.getInstance().setWeight(weight);
+    shipment.setWeight(weight);
   }
 }
 
@@ -65,11 +67,12 @@ function client({
   toZip,
   weight
 }: ClientArgs) {
-  const shipment = configureShipment(weight);
+  // would be better to create a singleton here so that the data is shared
+  const shipment = new ShipmentDecorator(configureShipment(weight));
+  
   configureFromAddressAndZip(fromAdd, fromZip);
   configureToAddressAndZip(toAdd, toZip);
   configureWeight(weight);
-  shipment.getShipmentID();
   console.log(shipment.ship());
 }
 

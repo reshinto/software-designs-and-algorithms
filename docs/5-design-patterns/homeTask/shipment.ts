@@ -1,62 +1,64 @@
+import DecoratorInterface from "./decoratorInterface";
 import Shipper from "./shipper";
 
-class Shipment {
-  private static instance: Shipment;
-  private shipmentID = 0;
+// this would be a lot easier if we write this as an abstract class than to a singleton
+class Shipment implements DecoratorInterface {
+  public static instance: Shipment;
+  public shipmentID = 0;
   protected weight = 0;
   private fromAddress = "";
   private fromZipCode = "";
   private toAddress = "";
   private toZipCode = "";
 
-  protected constructor() {}
+  public constructor() {}
 
-  public static getInstance() {
+  public static getInstance(): Shipment {
     if (!Shipment.instance) {
       Shipment.instance = new Shipment();
     }
     return Shipment.instance;
   }
 
-  public getShipmentID() {
+  public getShipmentID(): number {
     return ++this.shipmentID;
   }
 
-  public ship() {
+  public ship(): string {
     Shipper.configureShipper(this.getFromZipCode());
-    return `Shipment ${this.shipmentID} ` +
-    `from ${this.getFromAddress()} ${this.getFromZipCode()} ` +
-    `to ${this.getToAddress()} ${this.getToZipCode()}, ` +
-    `cost ${this.getCost()}`;
+    return `Shipment with the ID ${this.getShipmentID()} ` +
+    `will be picked up from ${this.getFromAddress()} ${this.getFromZipCode()} ` +
+    `and shipped to ${this.getToAddress()} ${this.getToZipCode()}\n` +
+    `Cost = ${this.getCost()} cents`;
   }
 
-  private getCost() {
+  private getCost(): number {
     return Shipper.getInstance().getCost(this.weight);
   }
 
-  public setWeight(weight: number) {
+  public setWeight(weight: number): void {
     this.weight = weight;
   }
 
-  private getFromAddress() {
+  private getFromAddress(): string {
     if (!this.fromAddress) {
       throw new Error("From address is not set");
     }
     return this.fromAddress;
   }
 
-  public setFromAddress(address: string) {
+  public setFromAddress(address: string): void {
     this.fromAddress = address;
   }
 
-  private getFromZipCode() {
+  private getFromZipCode(): string {
     if (!this.fromZipCode) {
       throw new Error("From zip code is not set");
     }
     return this.fromZipCode;
   }
 
-  public setFromZipCode(zipCode: string) {
+  public setFromZipCode(zipCode: string): void {
     if (zipCode.length === 5) {
       this.fromZipCode = zipCode;
     } else {
@@ -64,25 +66,25 @@ class Shipment {
     }
   }
 
-  private getToAddress() {
+  private getToAddress(): string {
     if (!this.toAddress) {
       throw new Error("To address is not set");
     }
     return this.toAddress;
   }
 
-  public setToAddress(address: string) {
+  public setToAddress(address: string): void {
     this.toAddress = address;
   }
 
-  private getToZipCode() {
+  private getToZipCode(): string {
     if (!this.toZipCode) {
       throw new Error("To zip code is not set");
     }
     return this.toZipCode;
   }
 
-  public setToZipCode(zipCode: string) {
+  public setToZipCode(zipCode: string): void {
     if (zipCode.length === 5) {
       this.toZipCode = zipCode;
     } else {

@@ -3,6 +3,7 @@ import ChicagoSprintShipper from "./chicagoSprintShipper";
 import PacificParcelShipper from "./pacificParcelShipper";
 import ShipperInterface from "./shipperInterface";
 
+// might be better if this class was not a singleton
 class Shipper {
   private static instance: Shipper;
   private static packageType: string;
